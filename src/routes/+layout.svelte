@@ -1,18 +1,17 @@
 <script>
 	import favicon from '$lib/assets/favicon.svg';
 
-	// onMount runs after the component is mounted to the DOM
-	// only runs in the browser, not SSR
+	
 	import { onMount } from 'svelte';
 
-	// Browser used to test if client or server side
+	
 	import { browser } from '$app/environment';
 	import 'bootstrap/dist/css/bootstrap.min.css';
 	import 'bootstrap-icons/font/bootstrap-icons.min.css';
 
 	onMount(async () => {
 		if (browser) {
-			// if running in the browser, load Bootstrap
+			
 			console.log('Loading Bootstrap');
 			await import('bootstrap');
 		}
@@ -25,7 +24,7 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<!-- Header with Navbar -->
+
 <header class="navbar navbar-expand-md navbar-dark bd-navbar bg-dark">
 	<nav class="w-100 d-flex align-items-center" aria-label="Main navigation">
 		<div class="container-fluid main-wrapper d-flex justify-content-between align-items-center">
