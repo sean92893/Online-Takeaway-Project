@@ -102,7 +102,6 @@
 		21: 'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=400&h=300&fit=crop&auto=format', // ice cream
 	};
 
-	// Fetch photos from TheMealDB, fall back to hardcoded Unsplash URLs
 	let PHOTOS = $state<Record<number,string>>({...FALLBACK});
 
 	$effect(() => {
