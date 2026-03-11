@@ -2,6 +2,10 @@
 	import { enhance } from '$app/forms';
 	import type { PageData, ActionData } from './$types';
 
+	// import for stores/session file
+
+	import { session } from '$lib/stores/session';
+
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	const deliveryFee           = data?.deliveryFee           ?? 2.50;
