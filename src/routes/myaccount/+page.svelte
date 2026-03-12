@@ -129,12 +129,40 @@
     <p class="message">{message}</p>
   </div>
 
-  <!-- MOVED IMAGES BELOW THE FORM -->
+  <!-- Images -->
   <div class="pre-login-images">
     <img src="dominos.jpg" alt="Delicious Dish 1" class="pre-login-image" />
     <img src="clucks.jpeg" alt="Delicious Dish 2" class="pre-login-image" />
   </div>
 
+  <section class="account-page">
+  <h1>Getting Started</h1>
+
+  <div class="dashboard-grid">
+    <!-- Steps to Log In -->
+    <div class="card">
+      <h3>How to Log In</h3>
+      <ol class="login-steps">
+        <li>Enter your username or email address.</li>
+        <li>Type your secure password.</li>
+        <li>Click the <strong>Log In</strong> button.</li>
+        <li>Enjoy full access to your account!</li>
+      </ol>
+    </div>
+
+    <!-- Benefits of Making an Account -->
+    <div class="card">
+      <h3>Benefits of Creating an Account</h3>
+      <ul class="login-benefits">
+        <li>Access your personalized dashboard.</li>
+        <li>Save your preferences and settings.</li>
+        <li>Receive exclusive offers and updates.</li>
+        <li>Faster checkout and order tracking.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+  
 </div>
 
 {/if}
@@ -289,4 +317,15 @@ a{
   color:red;
   font-weight:bold;
 }
+
+.login-steps, .login-benefits {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.login-steps li, .login-benefits li {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
 </style>
