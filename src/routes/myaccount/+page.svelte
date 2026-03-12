@@ -1,198 +1,3 @@
-<!-- <script lang="ts">
-  import { session } from '$lib/stores/session';
-  import { get } from 'svelte/store';
-
-  let email = "";
-  let password = "";
-  let name = "";
-  let message = "";
-  let isRegister = false;
-
-  // Reactive loggedIn
-  let loggedIn = false;
-  session.subscribe((value) => loggedIn = !!value);
-
-  // Sample dashboard data
-  const orderHistory = [
-    { id: 1, items: "Pepperoni Pizza, Garlic Bread", date: "12 Mar 2026" },
-    { id: 2, items: "BBQ Chicken Pizza", date: "5 Mar 2026" }
-  ];
-  const favouriteMeals = ["Pepperoni Pizza", "BBQ Chicken Pizza", "Garlic Bread"];
-  const location = "123 Main Street";
-
-  async function login() {
-    try {
-      const res = await fetch("http://localhost:8080/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        session.set({ email, name: data.name, token: data.token });
-        message = "";
-      } else {
-        message = data.message || "Login failed";
-      }
-    } catch (err) {
-      message = "Network error or server unavailable";
-      console.error(err);
-    }
-  }
-
-  async function register() {
-    try {
-      const res = await fetch("http://localhost:8080/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        message = "Account created! Please log in.";
-        isRegister = false;
-      } else {
-        message = data.message || "Registration failed";
-      }
-    } catch (err) {
-      message = "Network error";
-      console.error(err);
-    }
-  }
-
-  function logout() {
-    session.set(null);
-    email = "";
-    password = "";
-    name = "";
-  }
-</script>
-
-<h1>My Account</h1>
-
-{#if loggedIn}
-  <!- Dashboard -->
-  <!-- <div class="dashboard">
-    <h2>Welcome {get(session)?.name || get(session)?.email}</h2>
-
-    <section>
-      <h3>Order History</h3>
-      <ul>
-        {#each orderHistory as order}
-          <li>{order.date} — {order.items}</li>
-        {/each}
-      </ul>
-    </section>
-
-    <section>
-      <h3>Location</h3>
-      <p>{location}</p>
-    </section>
-
-    <section>
-      <h3>Favourite Meals</h3>
-      <ul>
-        {#each favouriteMeals as meal}
-          <li>{meal}</li>
-        {/each}
-      </ul>
-    </section>
-
-    <button class="logout-btn" on:click={logout}>Logout</button>
-  </div>
-
-{:else} -->
-  <!-- Login / Register Form -->
-  <!-- <div class="login-box">
-    {#if isRegister}
-      <input type="text" placeholder="Name" bind:value={name} />
-      <input type="email" placeholder="Email" bind:value={email} />
-      <input type="password" placeholder="Password" bind:value={password} />
-      <button type="button" on:click={() => register()}>Create Account</button>
-      <p>
-        Already have an account? 
-        <a href="#" on:click={() => isRegister = false}>Login</a>
-      </p>
-    {:else}
-      <input type="email" placeholder="Email" bind:value={email} />
-      <input type="password" placeholder="Password" bind:value={password} />
-      <button type="button" on:click={() => login()}>Login</button>
-      <p>
-        Don't have an account? 
-        <a href="#" on:click={() => isRegister = true}>Create Account</a>
-      </p>
-    {/if}
-    <p class="message">{message}</p>
-  </div>
-{/if}
-
-<style>
-  h1 {
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-
-  .login-box, .dashboard {
-    max-width: 500px;
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 1rem;
-  }
-
-  input {
-    padding: 10px;
-    font-size: 16px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  button {
-    padding: 10px;
-    background: #ff6600;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-  }
-
-  a {
-    cursor: pointer;
-    color: #ff6600;
-    text-decoration: underline;
-  }
-
-  .logout-btn {
-    margin-top: 1rem;
-    background: #444;
-  }
-
-  .message {
-    color: red;
-    font-weight: bold;
-  }
-
-  section {
-    margin-top: 1rem;
-  }
-
-  section h3 {
-    margin-bottom: 0.5rem;
-  }
-
-  ul {
-    margin: 0;
-    padding-left: 1.2rem;
-  }
-
-  li {
-    margin-bottom: 0.3rem;
-  }
-</style>  -->
-
- 
-
 <script lang="ts">
   import { session } from '$lib/stores/session';
   import { get } from 'svelte/store';
@@ -203,22 +8,19 @@
   let message = "";
   let isRegister = false;
 
-  // Reactive loggedIn state
   let loggedIn = false;
   session.subscribe((value) => loggedIn = !!value);
 
-  // Sample dashboard data
   const orderHistory = [
     { id: 1, items: "Pepperoni Pizza, Garlic Bread", date: "12 Mar 2026" },
     { id: 2, items: "BBQ Chicken Pizza", date: "5 Mar 2026" }
   ];
-  const favouriteMeals = ["Pepperoni Pizza", "BBQ Chicken Pizza", "Garlic Bread"];
-  const location = "123 Main Street";
 
-  // Mocked login
+  const favouriteMeals = ["Pepperoni Pizza", "BBQ Chicken Pizza", "Garlic Bread"];
+  const location = "75 Hillcrest Close, Lucan Co. Dublin"
+
   async function login() {
     message = "";
-    // simulate network delay
     await new Promise(r => setTimeout(r, 500));
 
     if (email && password) {
@@ -228,7 +30,6 @@
     }
   }
 
-  // Mocked registration
   async function register() {
     message = "";
     await new Promise(r => setTimeout(r, 500));
@@ -236,7 +37,6 @@
     if (name && email && password) {
       message = "Account created! Please log in.";
       isRegister = false;
-      // optionally pre-fill email field for login
     } else {
       message = "Please fill all fields";
     }
@@ -254,122 +54,239 @@
 <h1>My Account</h1>
 
 {#if loggedIn}
-  <!-- Dashboard -->
-  <div class="dashboard">
-    <h2>Welcome {get(session)?.name || get(session)?.email}</h2>
 
-    <section>
+<div class="account-page">
+
+  <div class="account-header">
+    <h2>Welcome back {get(session)?.name || get(session)?.email}</h2>
+    <p>Ready for your next order?</p>
+  </div>
+
+  <div class="dashboard-grid">
+
+    <section class="card">
       <h3>Order History</h3>
-      <ul>
-        {#each orderHistory as order}
-          <li>{order.date} — {order.items}</li>
-        {/each}
-      </ul>
+      {#each orderHistory as order}
+        <div class="order-item">
+          <strong>{order.date}</strong>
+          <p>{order.items}</p>
+        </div>
+      {/each}
     </section>
 
-    <section>
-      <h3>Location</h3>
+    <section class="card">
+      <h3>Delivery Location</h3>
       <p>{location}</p>
     </section>
 
-    <section>
+    <section class="card">
       <h3>Favourite Meals</h3>
-      <ul>
+      <div class="meal-list">
         {#each favouriteMeals as meal}
-          <li>{meal}</li>
+          <span class="meal-chip">{meal}</span>
         {/each}
-      </ul>
+      </div>
     </section>
 
-    <button class="logout-btn" on:click={logout}>Logout</button>
+    <section class="card">
+      <h3>Profile</h3>
+      <p><strong>Name:</strong> {get(session)?.name}</p>
+      <p><strong>Email:</strong> {get(session)?.email}</p>
+    </section>
+
   </div>
 
+  <button class="logout-btn" on:click={logout}>Logout</button>
+
+</div>
+
 {:else}
-  <!-- Login / Register Form -->
+
+<div class="login-container">
+
   <div class="login-box">
     {#if isRegister}
+      <h2>Create Account</h2>
       <input type="text" placeholder="Name" bind:value={name} />
       <input type="email" placeholder="Email" bind:value={email} />
       <input type="password" placeholder="Password" bind:value={password} />
       <button type="button" on:click={register}>Create Account</button>
       <p>
-        Already have an account? 
+        Already have an account?
         <a href="#" on:click={() => isRegister = false}>Login</a>
       </p>
     {:else}
+      <h2>Login</h2>
       <input type="email" placeholder="Email" bind:value={email} />
       <input type="password" placeholder="Password" bind:value={password} />
       <button type="button" on:click={login}>Login</button>
       <p>
-        Don't have an account? 
+        Don't have an account?
         <a href="#" on:click={() => isRegister = true}>Create Account</a>
       </p>
     {/if}
+
     <p class="message">{message}</p>
   </div>
+
+  <!-- MOVED IMAGES BELOW THE FORM -->
+  <div class="pre-login-images">
+    <img src="dominos.jpg" alt="Delicious Dish 1" class="pre-login-image" />
+    <img src="clucks.jpeg" alt="Delicious Dish 2" class="pre-login-image" />
+  </div>
+
+</div>
+
 {/if}
 
 <style>
-  h1 {
-    text-align: center;
-    margin-bottom: 1rem;
-  }
+h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 3rem;
+  font-weight: 900;
+  position: relative;
+}
 
-  .login-box, .dashboard {
-    max-width: 500px;
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 1rem;
-  }
+.account-page{
+  max-width:1000px;
+  margin:auto;
+  padding:2rem;
+  min-height:60vh;
+}
 
-  input {
-    padding: 10px;
-    font-size: 16px;
-    width: 100%;
-    box-sizing: border-box;
-  }
+.account-header{
+  background:#ff6600;
+  color:white;
+  padding:2rem;
+  border-radius:10px;
+  text-align:center;
+  margin-bottom:2rem;
+}
 
-  button {
-    padding: 10px;
-    background: #ff6600;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-  }
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(250px,1fr));
+  gap:20px;
+}
 
-  a {
-    cursor: pointer;
-    color: #ff6600;
-    text-decoration: underline;
-  }
+.card{
+  background:white;
+  padding:1.5rem;
+  border-radius:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
 
-  .logout-btn {
-    margin-top: 1rem;
-    background: #444;
-  }
+.card h3{
+  margin-bottom:10px;
+}
 
-  .message {
-    color: red;
-    font-weight: bold;
-  }
+.order-item{
+  background:#f5f5f5;
+  padding:10px;
+  border-radius:6px;
+  margin-bottom:8px;
+}
 
-  section {
-    margin-top: 1rem;
-  }
+.meal-list{
+  display:flex;
+  flex-wrap:wrap;
+}
 
-  section h3 {
-    margin-bottom: 0.5rem;
-  }
+.meal-chip{
+  background:#ff6600;
+  color:white;
+  padding:6px 12px;
+  border-radius:20px;
+  margin:5px;
+  font-size:14px;
+}
 
-  ul {
-    margin: 0;
-    padding-left: 1.2rem;
-  }
+.logout-btn{
+  margin-top:2rem;
+  padding:12px;
+  width:100%;
+  background:#e74c3c;
+  color:white;
+  border:none;
+  font-weight:bold;
+  cursor:pointer;
+  border-radius:6px;
+  transition: background 0.2s;
+}
 
-  li {
-    margin-bottom: 0.3rem;
-  }
+.logout-btn:hover{
+  background:#c0392b;
+}
+
+.login-container{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2rem;
+}
+
+.pre-login-images{
+  display:flex;
+  gap:20px;
+  justify-content:center;
+  margin-top:20px;
+}
+
+.pre-login-image{
+  width:250px;
+  border-radius:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor:pointer;
+}
+
+.pre-login-image:hover{
+  transform: scale(1.05);
+  box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+.login-box{
+  background:white;
+  max-width:400px;
+  width:100%;
+  padding:2rem;
+  border-radius:10px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.1);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+input{
+  padding:10px;
+  font-size:16px;
+  width:100%;
+  box-sizing:border-box;
+}
+
+button{
+  padding:10px;
+  background:#ff6600;
+  color:white;
+  border:none;
+  cursor:pointer;
+  font-weight:bold;
+  transition: background 0.2s;
+}
+
+button:hover{
+  background:#e65c00;
+}
+
+a{
+  cursor:pointer;
+  color:#ff6600;
+  text-decoration:underline;
+}
+
+.message{
+  color:red;
+  font-weight:bold;
+}
 </style>
