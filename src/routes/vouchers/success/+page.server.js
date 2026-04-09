@@ -1,6 +1,6 @@
 // X00224599
 import { error } from '@sveltejs/kit';
-import { stripe } from '$lib/server/db/stripe.js';
+import { stripe } from '$lib/server/stripe.js';
 
 
 
