@@ -88,4 +88,10 @@
 		transition: color 0.2s ease;
 		border-radius: 2rem;
 	}
+
+	.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; 
+  	}
 </style>
