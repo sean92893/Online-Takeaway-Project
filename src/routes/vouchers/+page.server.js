@@ -1,5 +1,5 @@
 // X00224599
-import { stripe } from '$lib/server/db/stripe.js';
+import { stripe } from '$lib/server/stripe.js';
 import { fail, redirect } from '@sveltejs/kit';
 import { ORIGIN } from '$env/static/private';
 
