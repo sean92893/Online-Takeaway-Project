@@ -1,3 +1,4 @@
+<!-- Saranuwat Sangsawang -->
 <script>
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
@@ -13,7 +14,7 @@
   let { children } = $props();
 </script>
 
-<!-- Header with Navbar — matches your main project layout -->
+
 <header class="navbar navbar-expand-md navbar-dark bd-navbar bg-dark">
   <nav class="w-100 d-flex align-items-center" aria-label="Main navigation">
     <div class="container-fluid main-wrapper d-flex justify-content-between align-items-center">
