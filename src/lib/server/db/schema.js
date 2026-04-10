@@ -8,6 +8,14 @@ export const task = sqliteTable('task', {
 	priority: integer('priority').notNull().default(1)
 });
 
+import {
+	text,
+	integer,
+	real,
+	sqliteTable
+} from 'drizzle-orm/sqlite-core';
+
+
 
 // User login 
 export const users = sqliteTable('users', {
