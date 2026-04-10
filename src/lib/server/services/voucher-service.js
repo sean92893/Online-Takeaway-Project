@@ -3,7 +3,7 @@ import { voucherDataAccess } from '$lib/server/data-access/voucher-data-access.j
 import { sendVoucherEmail } from '$lib/server/email/voucher-email-service.js';
 import crypto from 'crypto';
 
-const VALID_AMOUNTS = [1000, 2000, 5000]; // €10, €20, €50 in cents
+const VALID_AMOUNTS = [1000, 2000, 2500,3000,4000, 5000]; // €10, €20... €50 in cents
 
 // Generates a unique code like RTE-xxx-xxxx
 function generateCode() {
@@ -18,7 +18,7 @@ export const voucherService = {
   async purchaseVoucher({ recipientName, recipientEmail, senderName, amount, message }) {
 
     if (!VALID_AMOUNTS.includes(amount)) {
-      throw new Error('Invalid voucher amount. Choose €10, €20, or €50.');
+      throw new Error('Invalid voucher amount. Choose €10, €20.... €50.');
     }
     if (!recipientName?.trim() || !recipientEmail?.trim() || !senderName?.trim()) {
       throw new Error('Please fill in all required fields.');
