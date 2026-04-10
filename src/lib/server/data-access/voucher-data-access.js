@@ -1,7 +1,7 @@
 // X00224599
 
 import { db } from '$lib/server/db';
-import { giftVoucher } from '../schema.js';
+import { giftVoucher } from '../db/schema.js';
 import { eq } from 'drizzle-orm';
 
 export const voucherDataAccess = {
