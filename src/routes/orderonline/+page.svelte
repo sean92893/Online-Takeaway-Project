@@ -4,7 +4,7 @@
 
 	// import for stores/session file
 
-	import { session } from '$lib/stores/session';
+	// import { session } from '$lib/stores/session';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
