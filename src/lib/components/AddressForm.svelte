@@ -1,4 +1,7 @@
+<!-- X00224599 -->
 <script>
+  import { deliveryAddress } from '$lib/stores.js';
+  
   let { onSubmit, onError } = $props();
 
   let address = $state('');
@@ -11,6 +14,7 @@
       return;
     }
     error = '';
+    deliveryAddress.set(address); 
     onSubmit?.(address);
   }
 </script>
@@ -40,7 +44,7 @@
             <button class="btn btn-dark" type="button" onclick={handleSubmit}>Find Food</button>
           </div>
           {#if error}
-            <p class="text-dark mt-2" >{error}</p>
+            <p class="text-dark mt-2">{error}</p>
           {/if}
         </form>
       </div>

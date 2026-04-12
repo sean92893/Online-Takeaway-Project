@@ -1,29 +1,27 @@
+<!-- //X00224599 -->
 <script>
-	import AddressForm from '$lib/components/AddressForm.svelte';
+  import AddressForm from '$lib/components/AddressForm.svelte';
+  import { goto } from '$app/navigation';
 
-	let savedAddress = $state('');
-	let formError = $state('');
+  let formError = $state('');
 
-	function handleAddress(address) {
-		savedAddress = address;
-		formError = '';
-		console.log('Finding food near:', savedAddress);
-	}
+  function handleAddress(address) {
+    goto('/orderonline');
+  }
 
-	function handleError(error) {
-		formError = error;
-		savedAddress = '';
-		console.log('Error:', formError);
-	}
+  function handleError(error) {
+    formError = error;
+  }
 </script>
 
 <AddressForm onSubmit={handleAddress} onError={handleError} />
+
 
 <section class="px-0 mx-0">
 	<img
 		src="free.png"
 		alt="Free Delivery Over €30"
-		style="width: 100%; height: 900px; width: 100vw; margin-left: calc(-50vw + 50%);"
+		style="width: 100%;  width: 100vw; margin-left: calc(-50vw + 50%);"
 	/>
 </section>
 

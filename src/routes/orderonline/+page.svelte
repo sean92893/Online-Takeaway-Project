@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import type { PageData, ActionData } from './$types';
 
-	import { session } from '$lib/stores/session';
+	// import { session } from '$lib/stores/session';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
