@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import type { PageData, ActionData } from './$types';
 
-	// import { session } from '$lib/stores/session';
+	import { session } from '$lib/stores/session';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -10,54 +10,54 @@
 	let minimumOrder          = $derived(data?.minimumOrder          ?? 10.00);
 	let estimatedDeliveryTime = $derived(data?.estimatedDeliveryTime ?? 30);
 
-	type Item = { id:number; name:string; desc:string; price:number; prepTime:number; icon:string; color:string };
+	type Item = { id:number; name:string; desc:string; price:number; prepTime:number; icon:string; color:string; image:string };
 	type Cat  = { id:string; label:string; icon:string; items:Item[] };
 
 	const MENU: Cat[] = [
 		{
 			id:'starters', label:'Starters', icon:'bi-egg-fried',
 			items:[
-				{ id:1,  name:'Garlic Bread',     desc:'Toasted ciabatta with roasted garlic butter & herbs',      price:3.99,  prepTime:5,  icon:'bi-bread-slice',         color:'#f59e0b' },
-				{ id:2,  name:'Chicken Wings',    desc:'6 crispy wings — buffalo or BBQ sauce',                    price:7.99,  prepTime:12, icon:'bi-egg-fried',           color:'#ef4444' },
-				{ id:3,  name:'Tomato Soup',      desc:'Velvety roasted tomato soup with a crusty roll',           price:4.99,  prepTime:8,  icon:'bi-cup-hot-fill',        color:'#dc2626' },
-				{ id:4,  name:'Onion Rings',      desc:'Beer-battered golden rings with smoky dipping sauce',      price:4.49,  prepTime:7,  icon:'bi-circle',              color:'#d97706' },
+				{ id:1,  name:'Garlic Bread',     desc:'Toasted ciabatta with roasted garlic butter & herbs',      price:3.99,  prepTime:5,  icon:'bi-bread-slice',         color:'#f59e0b', image:'/menuimgs/ciabatta-garlic-bread-1.jpg' },
+				{ id:2,  name:'Chicken Wings',    desc:'6 crispy wings — buffalo or BBQ sauce',                    price:7.99,  prepTime:12, icon:'bi-egg-fried',           color:'#ef4444', image:'/menuimgs/chicken_wings2.jpg' },
+				{ id:3,  name:'Tomato Soup',      desc:'Velvety roasted tomato soup with a crusty roll',           price:4.99,  prepTime:8,  icon:'bi-cup-hot-fill',        color:'#dc2626', image:'/menuimgs/tomato_soup3.jpg' },
+				{ id:4,  name:'Onion Rings',      desc:'Beer-battered golden rings with smoky dipping sauce',      price:4.49,  prepTime:7,  icon:'bi-circle',              color:'#d97706', image:'/menuimgs/onion_rings4.jpg' },
 			]
 		},
 		{
 			id:'mains', label:'Mains', icon:'bi-fire',
 			items:[
-				{ id:5,  name:'Classic Burger',      desc:'Beef patty, smoked cheese, lettuce, tomato & brioche bun', price:11.99, prepTime:15, icon:'bi-fire',                color:'#ef4444' },
-				{ id:6,  name:'Chicken Fillet Wrap', desc:'Crispy chicken, crunchy slaw & sriracha mayo',              price:10.49, prepTime:12, icon:'bi-journal-richtext',    color:'#f97316' },
-				{ id:7,  name:'Margherita Pizza',    desc:'12" stone-baked, San Marzano tomato, fresh mozzarella',     price:12.99, prepTime:18, icon:'bi-circle-half',         color:'#c8720a' },
-				{ id:8,  name:'BBQ Pulled Pork',     desc:'Slow-cooked 12hr pork, homemade slaw, brioche bun',         price:13.49, prepTime:20, icon:'bi-trophy-fill',         color:'#b45309' },
-				{ id:9,  name:'Veggie Curry',        desc:'Spiced chickpea & spinach curry with basmati rice',         price:10.99, prepTime:15, icon:'bi-star-fill',           color:'#16a34a' },
-				{ id:10, name:'Fish & Chips',        desc:'Beer-battered cod, chunky chips & mushy peas',              price:13.99, prepTime:18, icon:'bi-water',               color:'#0ea5e9' },
+				{ id:5,  name:'Classic Burger',      desc:'Beef patty, smoked cheese, lettuce, tomato & brioche bun', price:11.99, prepTime:15, icon:'bi-fire',                color:'#ef4444', image:'/menuimgs/burger_5.jpg' },
+				{ id:6,  name:'Chicken Fillet Wrap', desc:'Crispy chicken, crunchy slaw & sriracha mayo',              price:10.49, prepTime:12, icon:'bi-journal-richtext',    color:'#f97316', image:'/menuimgs/chicken_wrap6.jpg' },
+				{ id:7,  name:'Margherita Pizza',    desc:'12" stone-baked, San Marzano tomato, fresh mozzarella',     price:12.99, prepTime:18, icon:'bi-circle-half',         color:'#c8720a', image:'/menuimgs/margherita_pizza7.webp' },
+				{ id:8,  name:'BBQ Pulled Pork',     desc:'Slow-cooked 12hr pork, homemade slaw, brioche bun',         price:13.49, prepTime:20, icon:'bi-trophy-fill',         color:'#b45309', image:'/menuimgs/pulled_pork_sandwhich8.jpg' },
+				{ id:9,  name:'Veggie Curry',        desc:'Spiced chickpea & spinach curry with basmati rice',         price:10.99, prepTime:15, icon:'bi-star-fill',           color:'#16a34a', image:'/menuimgs/veggie_curry9.jpg' },
+				{ id:10, name:'Fish & Chips',        desc:'Beer-battered cod, chunky chips & mushy peas',              price:13.99, prepTime:18, icon:'bi-water',               color:'#0ea5e9', image:'/menuimgs/fish_and_chips10.avif' },
 			]
 		},
 		{
 			id:'sides', label:'Sides', icon:'bi-grid-fill',
 			items:[
-				{ id:11, name:'Chunky Chips',       desc:'Hand-cut chips with sea salt & rosemary',         price:3.49, prepTime:8,  icon:'bi-view-list',           color:'#f59e0b' },
-				{ id:12, name:'Side Salad',         desc:'Mixed leaves, cherry tomatoes & house dressing',  price:3.99, prepTime:4,  icon:'bi-flower1',             color:'#22c55e' },
-				{ id:13, name:'Coleslaw',           desc:'Creamy homemade coleslaw with a hint of mustard', price:2.49, prepTime:2,  icon:'bi-layers-fill',         color:'#84cc16' },
-				{ id:14, name:'Sweet Potato Fries', desc:'Crispy sweet potato fries with smoked paprika',   price:3.99, prepTime:10, icon:'bi-lightning-fill',      color:'#f97316' },
+				{ id:11, name:'Chunky Chips',       desc:'Hand-cut chips with sea salt & rosemary',         price:3.49, prepTime:8,  icon:'bi-view-list',           color:'#f59e0b', image:'/menuimgs/chunky_chips11.jpg' },
+				{ id:12, name:'Side Salad',         desc:'Mixed leaves, cherry tomatoes & house dressing',  price:3.99, prepTime:4,  icon:'bi-flower1',             color:'#22c55e', image:'/menuimgs/side_salad12.jpg' },
+				{ id:13, name:'Coleslaw',           desc:'Creamy homemade coleslaw with a hint of mustard', price:2.49, prepTime:2,  icon:'bi-layers-fill',         color:'#84cc16', image:'/menuimgs/coleslaw_13.jpg' },
+				{ id:14, name:'Sweet Potato Fries', desc:'Crispy sweet potato fries with smoked paprika',   price:3.99, prepTime:10, icon:'bi-lightning-fill',      color:'#f97316', image:'/menuimgs/sweet_potatoe_fries14.jpg' },
 			]
 		},
 		{
 			id:'drinks', label:'Drinks', icon:'bi-cup-straw',
 			items:[
-				{ id:15, name:'Soft Drink',         desc:'Coke, Diet Coke, 7UP or Fanta — chilled can',       price:1.99, prepTime:0, icon:'bi-cup-straw',           color:'#ef4444' },
-				{ id:16, name:'Still Water',        desc:'500ml chilled bottled water',                       price:1.49, prepTime:0, icon:'bi-droplet-fill',        color:'#38bdf8' },
-				{ id:17, name:'Milkshake',          desc:'Thick & creamy — Chocolate, Vanilla or Strawberry', price:4.49, prepTime:5, icon:'bi-cup-fill',            color:'#a78bfa' },
-				{ id:18, name:'Fresh Orange Juice', desc:'Freshly squeezed OJ, 300ml',                        price:3.49, prepTime:3, icon:'bi-brightness-high-fill',color:'#fb923c' },
+				{ id:15, name:'Soft Drink',         desc:'Coke, Diet Coke, 7UP or Fanta — chilled can',       price:1.99, prepTime:0, icon:'bi-cup-straw',           color:'#ef4444', image:'/menuimgs/soft_drinks15.webp' },
+				{ id:16, name:'Still Water',        desc:'500ml chilled bottled water',                       price:1.49, prepTime:0, icon:'bi-droplet-fill',        color:'#38bdf8', image:'/menuimgs/water_16.jpg' },
+				{ id:17, name:'Milkshake',          desc:'Thick & creamy — Chocolate, Vanilla or Strawberry', price:4.49, prepTime:5, icon:'bi-cup-fill',            color:'#a78bfa', image:'/menuimgs/milkshake17.jpg' },
+				{ id:18, name:'Fresh Orange Juice', desc:'Freshly squeezed OJ, 300ml',                        price:3.49, prepTime:3, icon:'bi-brightness-high-fill',color:'#fb923c', image:'/menuimgs/orangejuice18.jpg' },
 			]
 		},
 		{
 			id:'desserts', label:'Desserts', icon:'bi-cake2-fill',
 			items:[
-				{ id:19, name:'Chocolate Brownie', desc:'Warm fudge brownie with vanilla bean ice cream', price:5.99, prepTime:6, icon:'bi-cake2-fill',          color:'#92400e' },
-				{ id:20, name:'Cheesecake',        desc:'NY baked cheesecake with summer berry coulis',   price:5.49, prepTime:4, icon:'bi-cake-fill',           color:'#f9a8d4' },
-				{ id:21, name:'Ice Cream',         desc:'2 generous scoops — your choice of flavour',    price:3.99, prepTime:3, icon:'bi-snow',                color:'#67e8f9' },
+				{ id:19, name:'Chocolate Brownie', desc:'Warm fudge brownie with vanilla bean ice cream', price:5.99, prepTime:6, icon:'bi-cake2-fill',          color:'#92400e', image:'/menuimgs/brownie19.webp' },
+				{ id:20, name:'Cheesecake',        desc:'NY baked cheesecake with summer berry coulis',   price:5.49, prepTime:4, icon:'bi-cake-fill',           color:'#f9a8d4', image:'/menuimgs/cheesecake20.jpg' },
+				{ id:21, name:'Ice Cream',         desc:'2 generous scoops — your choice of flavour',    price:3.99, prepTime:3, icon:'bi-snow',                color:'#67e8f9', image:'/menuimgs/icecream21.jpg' },
 			]
 		}
 	];
@@ -105,7 +105,7 @@
 	});
 </script>
 
-<!-- ORDER CONFIRMED -->
+<!-- ORDER CONFIRMATION-->
 {#if orderPlaced && form?.success}
 <div class="d-flex align-items-center justify-content-center" style="min-height:60vh; text-align:center;">
 	<div>
@@ -166,9 +166,13 @@
 						<div class="col">
 							<div class="card h-100 border {qty > 0 ? 'border-warning border-2' : ''}" style="border-radius:0;">
 
-								<!-- Bootstrap Icon placeholder -->
-								<div style="height:180px; background:#1a1a1a; display:flex; align-items:center; justify-content:center; position:relative;">
-									<i class="bi {item.icon}" style="font-size:5rem; color:{item.color}; opacity:.9;" aria-hidden="true"></i>
+								<!-- Food image -->
+								<div style="height:180px; overflow:hidden; position:relative;">
+									<img
+										src={item.image}
+										alt={item.name}
+										style="width:100%; height:100%; object-fit:cover; display:block;"
+									/>
 									<div style="position:absolute; top:0; left:0; background:#111; color:#fff; font-size:1.1rem; font-weight:700; font-style:italic; padding:.4rem .75rem; line-height:1;">
 										{fmt(item.price)}
 									</div>
@@ -217,7 +221,7 @@
 
 </div>
 
-<!-- float cart button  on the side-->
+<!-- cart button -->
 <button
 	class="btn btn-danger d-flex align-items-center gap-2"
 	style="position:fixed; bottom:1.25rem; left:50%; transform:translateX(-50%); z-index:900; border-radius:4px; padding:.65rem 1.4rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; box-shadow:0 3px 12px rgba(0,0,0,.4); white-space:nowrap;"
@@ -257,9 +261,11 @@
 			{:else}
 				{#each cart as line (line.id)}
 					<div class="d-flex align-items-center gap-2 px-3 py-2 border-bottom">
-						<div style="width:46px;height:46px;background:#1a1a1a;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:4px;">
-							<i class="bi {line.icon}" style="font-size:1.4rem;color:{line.color};" aria-hidden="true"></i>
-						</div>
+						<img
+							src={line.image}
+							alt={line.name}
+							style="width:46px;height:46px;object-fit:cover;flex-shrink:0;border-radius:4px;"
+						/>
 						<div class="flex-grow-1 overflow-hidden">
 							<div class="fw-bold text-truncate" style="font-size:.83rem;">{line.name}</div>
 							<div class="text-muted" style="font-size:.7rem;">{fmt(line.price)} each</div>
@@ -314,6 +320,7 @@
 	</div>
 {/if}
 
+<!-- checkout -->
 {#if showCheckout}
 	<button
 		class="border-0 p-0"
@@ -332,9 +339,11 @@
 			<div class="border rounded p-2 bg-light">
 				{#each cart as line (line.id)}
 					<div class="d-flex align-items-center gap-2 mb-2" style="font-size:.83rem;">
-						<div style="width:32px;height:32px;background:#1a1a1a;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:4px;">
-							<i class="bi {line.icon}" style="font-size:1rem;color:{line.color};" aria-hidden="true"></i>
-						</div>
+						<img
+							src={line.image}
+							alt={line.name}
+							style="width:32px;height:32px;object-fit:cover;flex-shrink:0;border-radius:4px;"
+						/>
 						<span class="flex-grow-1">{line.name} ×{line.qty}</span>
 						<span class="fw-bold text-danger">{fmt(line.price*line.qty)}</span>
 					</div>

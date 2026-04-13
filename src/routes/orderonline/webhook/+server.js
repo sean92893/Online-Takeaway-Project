@@ -1,13 +1,16 @@
 import Stripe from 'stripe';
 import { Resend } from 'resend';
 import { STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, RESEND_API_KEY, RESTAURANT_EMAIL } from '$env/static/private';
+import { db } from '$lib/server/db';
+import { orders } from '$lib/server/db/schema.js';
+import { eq } from 'drizzle-orm';
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
-const resend = new Resend(RESEND_API_KEY);
+const resend  = new Resend(RESEND_API_KEY);
 
 export async function POST({ request }) {
-    const rawBody = await request.arrayBuffer();
-    const buf     = Buffer.from(rawBody);
+    const rawBody   = await request.arrayBuffer();
+    const buf       = Buffer.from(rawBody);
     const signature = request.headers.get('stripe-signature');
 
     let event;
@@ -20,9 +23,15 @@ export async function POST({ request }) {
 
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
-        const { orderRef, name, address, phone, email, cart: cartJson } = session.metadata;
+        const { orderRef, orderId, name, address, phone, email, cart: cartJson } = session.metadata;
         const cart  = JSON.parse(cartJson);
         const total = (session.amount_total / 100).toFixed(2);
+
+        await db.update(orders)
+            .set({ status: 'paid' })
+            .where(eq(orders.id, orderId));
+
+        console.log(`Order ${orderRef} marked as paid in database`);
 
         const itemRows = cart.map(i =>
             `<tr>
@@ -52,7 +61,6 @@ export async function POST({ request }) {
             <p style="color:#888;font-size:.85em;">Estimated delivery: ~30 minutes</p>
         `;
 
-        // Email to customer
         await resend.emails.send({
             from:    'onboarding@resend.dev',
             to:      email,
@@ -60,7 +68,6 @@ export async function POST({ request }) {
             html,
         });
 
-        // Email to restaurant
         await resend.emails.send({
             from:    'onboarding@resend.dev',
             to:      RESTAURANT_EMAIL,
@@ -69,7 +76,18 @@ export async function POST({ request }) {
                       <p><strong>Address:</strong> ${address}</p>${html}`,
         });
 
-        console.log(`Order ${orderRef} processed — emails sent`);
+        console.log(`Order ${orderRef} — emails sent to ${email} and ${RESTAURANT_EMAIL}`);
+    }
+
+    if (event.type === 'checkout.session.expired') {
+        const session = event.data.object;
+        const { orderId } = session.metadata;
+        if (orderId) {
+            await db.update(orders)
+                .set({ status: 'cancelled' })
+                .where(eq(orders.id, orderId));
+            console.log(`Order ${orderId} marked as cancelled`);
+        }
     }
 
     return new Response('OK', { status: 200 });

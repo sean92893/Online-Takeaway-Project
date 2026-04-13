@@ -1,5 +1,8 @@
 import Stripe from 'stripe';
 import { STRIPE_SECRET_KEY } from '$env/static/private';
+import { db } from '$lib/server/db';
+import { users, orders } from '$lib/server/db/schema.js';
+import { eq } from 'drizzle-orm';
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
@@ -35,14 +38,38 @@ export const actions = {
         }
 
         const orderRef = `RTE-${Date.now().toString(36).toUpperCase()}`;
+        const origin   = request.headers.get('origin') || 'http://localhost:5173';
+        const total    = cart.reduce((sum, item) => sum + item.price * item.qty, 0) + 2.50;
 
-		const origin = request.headers.get('origin') || 'http://localhost:5173';
+        // Find or create a guest user for this email
+        let user = await db.select().from(users).where(eq(users.email, email)).get();
 
+        if (!user) {
+            const [newUser] = await db.insert(users).values({
+                name:     name,
+                email:    email,
+                password: 'guest',
+                address:  address,
+                phone:    phone
+            }).returning();
+            user = newUser;
+        }
+
+        // Save order to database — store cart as JSON in status field for now
+        // since menu items are hardcoded not in DB
+        const [order] = await db.insert(orders).values({
+            id:         orderRef,
+            userId:     user.id,
+            totalPrice: total,
+            status:     'pending'
+        }).returning();
+
+        // Build Stripe line items
         const lineItems = cart.map(item => ({
             price_data: {
                 currency: 'eur',
                 product_data: {
-                    name: item.name,
+                    name:        item.name,
                     description: item.desc,
                 },
                 unit_amount: Math.round(item.price * 100),
@@ -54,19 +81,20 @@ export const actions = {
             price_data: {
                 currency: 'eur',
                 product_data: { name: 'Delivery Fee' },
-                unit_amount: 250, // €2.50
+                unit_amount: 250,
             },
             quantity: 1,
         });
 
-        //  Stripe Checkout 
+        // Create Stripe Checkout Session
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
-            line_items: lineItems,
-            mode: 'payment',
-            customer_email: email,
+            line_items:           lineItems,
+            mode:                 'payment',
+            customer_email:       email,
             metadata: {
                 orderRef,
+                orderId: order.id,
                 name,
                 address,
                 phone,
@@ -80,62 +108,3 @@ export const actions = {
         return { redirect: session.url };
     }
 };
-
-
-
-
-
-
-
-
-// import { db } from '$lib/server/db';
-// import { menuItems, orders, orderItems } from '$lib/server/db/schema';
-
-// export async function load() {
-//   const items = await db.select().from(menuItems);
-
-//   return {
-//     menu: items,
-//     deliveryFee: 2.5,
-//     minimumOrder: 10,
-//     estimatedDeliveryTime: 30
-//   };
-// }
-
-// export const actions = {
-//   placeOrder: async ({ request }) => {
-//     const formData = await request.formData();
-
-//     const cart = JSON.parse(formData.get('cart'));
-//     const name = formData.get('name');
-//     const address = formData.get('address');
-//     const phone = formData.get('phone');
-
-//     if (!cart || cart.length === 0) {
-//       return { success: false, error: 'Cart is empty' };
-//     }
-
-//     const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-
-//     // Create order
-//     const [order] = await db.insert(orders).values({
-//       userId: 'guest', // replace later with real auth
-//       totalPrice: total,
-//       status: 'pending'
-//     }).returning();
-
-//     // Create order items
-//     for (const item of cart) {
-//       await db.insert(orderItems).values({
-//         orderId: order.id,
-//         menuItemId: item.id,
-//         quantity: item.qty
-//       });
-//     }
-
-//     return {
-//       success: true,
-//       orderRef: order.id
-//     };
-//   }
-// };
