@@ -10,7 +10,12 @@ export const task = sqliteTable('task', {
 	title: text('title').notNull(),
 	priority: integer('priority').notNull().default(1)
 });
-
+import {
+	text,
+	integer,
+	real,
+	sqliteTable
+} from 'drizzle-orm/sqlite-core';
 
 // User login 
 export const users = sqliteTable('users', {
@@ -99,6 +104,7 @@ export const restaurantInfo = sqliteTable('restaurant_info', {
 	openingHours: text('opening_hours')
 });
 
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
  
 export const giftVoucher = sqliteTable('gift_voucher', {
   id:             integer('id').primaryKey({ autoIncrement: true }),
