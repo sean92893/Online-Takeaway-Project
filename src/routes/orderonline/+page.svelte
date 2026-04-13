@@ -105,7 +105,7 @@
 	});
 </script>
 
-<!-- ORDER CONFIRMATION-->
+<!-- ORDER CONFIRMED -->
 {#if orderPlaced && form?.success}
 <div class="d-flex align-items-center justify-content-center" style="min-height:60vh; text-align:center;">
 	<div>
@@ -221,7 +221,7 @@
 
 </div>
 
-<!-- cart button -->
+<!-- floating cart button -->
 <button
 	class="btn btn-danger d-flex align-items-center gap-2"
 	style="position:fixed; bottom:1.25rem; left:50%; transform:translateX(-50%); z-index:900; border-radius:4px; padding:.65rem 1.4rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; box-shadow:0 3px 12px rgba(0,0,0,.4); white-space:nowrap;"
@@ -320,7 +320,7 @@
 	</div>
 {/if}
 
-<!-- checkout -->
+<!-- checkout modal -->
 {#if showCheckout}
 	<button
 		class="border-0 p-0"
