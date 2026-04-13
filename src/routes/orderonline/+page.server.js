@@ -80,3 +80,62 @@ export const actions = {
         return { redirect: session.url };
     }
 };
+
+
+
+
+
+
+
+
+// import { db } from '$lib/server/db';
+// import { menuItems, orders, orderItems } from '$lib/server/db/schema';
+
+// export async function load() {
+//   const items = await db.select().from(menuItems);
+
+//   return {
+//     menu: items,
+//     deliveryFee: 2.5,
+//     minimumOrder: 10,
+//     estimatedDeliveryTime: 30
+//   };
+// }
+
+// export const actions = {
+//   placeOrder: async ({ request }) => {
+//     const formData = await request.formData();
+
+//     const cart = JSON.parse(formData.get('cart'));
+//     const name = formData.get('name');
+//     const address = formData.get('address');
+//     const phone = formData.get('phone');
+
+//     if (!cart || cart.length === 0) {
+//       return { success: false, error: 'Cart is empty' };
+//     }
+
+//     const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+//     // Create order
+//     const [order] = await db.insert(orders).values({
+//       userId: 'guest', // replace later with real auth
+//       totalPrice: total,
+//       status: 'pending'
+//     }).returning();
+
+//     // Create order items
+//     for (const item of cart) {
+//       await db.insert(orderItems).values({
+//         orderId: order.id,
+//         menuItemId: item.id,
+//         quantity: item.qty
+//       });
+//     }
+
+//     return {
+//       success: true,
+//       orderRef: order.id
+//     };
+//   }
+// };
