@@ -1,4 +1,3 @@
-// src/routes/orderonline/+page.server.js
 import Stripe from 'stripe';
 import { STRIPE_SECRET_KEY } from '$env/static/private';
 import { db } from '$lib/server/db';
@@ -42,7 +41,6 @@ export const actions = {
         const origin   = request.headers.get('origin') || 'http://localhost:5173';
         const total    = cart.reduce((sum, item) => sum + item.price * item.qty, 0) + 2.50;
 
-        // Find or create a guest user for this email
         let user = await db.select().from(users).where(eq(users.email, email)).get();
 
         if (!user) {
@@ -56,8 +54,6 @@ export const actions = {
             user = newUser;
         }
 
-        // Save order to database — store cart as JSON in status field for now
-        // since menu items are hardcoded not in DB
         const [order] = await db.insert(orders).values({
             id:         orderRef,
             userId:     user.id,
@@ -65,7 +61,6 @@ export const actions = {
             status:     'pending'
         }).returning();
 
-        // Build Stripe line items
         const lineItems = cart.map(item => ({
             price_data: {
                 currency: 'eur',
@@ -87,7 +82,6 @@ export const actions = {
             quantity: 1,
         });
 
-        // Create Stripe Checkout Session
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items:           lineItems,
