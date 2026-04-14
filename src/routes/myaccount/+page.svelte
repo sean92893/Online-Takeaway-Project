@@ -14,13 +14,15 @@
   // LOAD USER FROM BACKEND
   // =========================
   onMount(async () => {
-    const res = await fetch("/myaccount");
-
-    if (res.ok) {
-      user = await res.json();
-      loggedIn = true;
-    }
+  const res = await fetch("/myaccount", {
+    credentials: "include" 
   });
+
+  if (res.ok) {
+    user = await res.json();
+    loggedIn = true;
+  }
+});
 
   // =========================
   // LOGIN (REAL BACKEND)
@@ -33,6 +35,7 @@
       headers: {
         "Content-Type": "application/json"
       },
+      credentials: "include",
       body: JSON.stringify({
         email,
         password
@@ -47,43 +50,63 @@
     }
 
     // reload user after login
-    const userRes = await fetch("/myaccount");
-    if (userRes.ok) {
-      user = await userRes.json();
-      loggedIn = true;
-    }
+    const userRes = await fetch("/myaccount", {
+      credentials: "include"
+});
+
+if (userRes.ok) {
+  user = await userRes.json();
+  loggedIn = true;
+
+  message = ""; // clear errors
+}
   }
 
   // =========================
   // REGISTER (KEEP SIMPLE)
   // =========================
   async function register() {
-    message = "";
+  message = "";
 
-    await new Promise(r => setTimeout(r, 500));
+  const res = await fetch("/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name,
+      email,
+      password
+    })
+  });
 
-    if (name && email && password) {
-      message = "Account created! Please log in.";
-      isRegister = false;
-    } else {
-      message = "Please fill all fields";
-    }
+  const data = await res.json();
+
+  if (!res.ok) {
+    message = data.error;
+    return;
   }
+
+  message = "Account created! Please log in.";
+  isRegister = false;
+}
 
   // =========================
   // LOGOUT (REAL)
   // =========================
   async function logout() {
-    await fetch("/logout");
+  await fetch("/logout", {
+    credentials: "include"
+  });
 
-    user = null;
-    loggedIn = false;
+  user = null;
+  loggedIn = false;
 
-    email = "";
-    password = "";
-    name = "";
-    message = "";
-  }
+  email = "";
+  password = "";
+  name = "";
+  message = "";
+}
 
   // =========================
   // STATIC UI DATA (KEEP YOUR UI)

@@ -9,6 +9,9 @@ import { eq } from "drizzle-orm";
 export async function GET({ cookies }) {
   const userId = cookies.get("user_id");
 
+  // cookie test for user login
+  console.log("USER ID FROM COOKIE:", userId);
+
   // not logged in
   if (!userId) {
     return new Response(
@@ -21,7 +24,7 @@ export async function GET({ cookies }) {
   const user = await db
     .select()
     .from(users)
-    .where(eq(users.id, Number(userId)));
+    .where(eq(users.id, userId));
 
   // User not found (edge case)
   if (!user[0]) {
@@ -70,3 +73,4 @@ export async function POST({ request, cookies }) {
     { status: 200 }
   );
 }
+
