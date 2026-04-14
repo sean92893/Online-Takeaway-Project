@@ -1,28 +1,72 @@
-// api file for my account
+import { db } from "$lib/server/db";
+import { users } from "$lib/server/db/schema";
+import { eq } from "drizzle-orm";
 
-import { db } from '$lib/server/db';
-import { users } from '$lib/server/db/schema';
 
-// GET user profile
-export async function GET({ locals }) {
-  const userId = locals.user.id; // from session
-  const user = await db.select().from(users).where(users.id.eq(userId));
-  return new Response(JSON.stringify(user[0]));
+  // GET user profile (for My Account page)
+  // Uses cookie to identify logged-in user
+ 
+export async function GET({ cookies }) {
+  const userId = cookies.get("user_id");
+
+  // not logged in
+  if (!userId) {
+    return new Response(
+      JSON.stringify({ error: "Not logged in" }),
+      { status: 401 }
+    );
+  }
+
+  // Get user from DB
+  const user = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, Number(userId)));
+
+  // User not found (edge case)
+  if (!user[0]) {
+    return new Response(
+      JSON.stringify({ error: "User not found" }),
+      { status: 404 }
+    );
+  }
+
+  return new Response(
+    JSON.stringify(user[0]),
+    { status: 200 }
+  );
 }
 
-// POST (update) user profile
-export async function POST({ request, locals }) {
-  const data = await request.json();
-  const userId = locals.user.id;
 
-  await db.update(users)
+  // POST update user profile
+  // Updates name, email, address, phone
+
+export async function POST({ request, cookies }) {
+  const userId = cookies.get("user_id");
+
+  // If user not logged in
+  if (!userId) {
+    return new Response(
+      JSON.stringify({ error: "Not logged in" }),
+      { status: 401 }
+    );
+  }
+
+  const data = await request.json();
+
+  // update user in DB
+  await db
+    .update(users)
     .set({
       name: data.name,
       email: data.email,
       address: data.address,
       phone: data.phone
     })
-    .where(users.id.eq(userId));
+    .where(eq(users.id, Number(userId)));
 
-  return new Response(JSON.stringify({ success: true }));
+  return new Response(
+    JSON.stringify({ success: true }),
+    { status: 200 }
+  );
 }
