@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { session } from '$lib/stores/session';
-  import { get } from 'svelte/store';
+  import { onMount } from "svelte";
 
   let email = "";
   let password = "";
@@ -9,29 +8,58 @@
   let isRegister = false;
 
   let loggedIn = false;
-  session.subscribe((value) => loggedIn = !!value);
+  let user = null;
 
-  const orderHistory = [
-    { id: 1, items: "Pepperoni Pizza, Garlic Bread", date: "12 Mar 2026" },
-    { id: 2, items: "BBQ Chicken Pizza", date: "5 Mar 2026" }
-  ];
+  // =========================
+  // LOAD USER FROM BACKEND
+  // =========================
+  onMount(async () => {
+    const res = await fetch("/myaccount");
 
-  const favouriteMeals = ["Pepperoni Pizza", "BBQ Chicken Pizza", "Garlic Bread"];
-  const location = "75 Hillcrest Close, Lucan Co. Dublin"
+    if (res.ok) {
+      user = await res.json();
+      loggedIn = true;
+    }
+  });
 
+  // =========================
+  // LOGIN (REAL BACKEND)
+  // =========================
   async function login() {
     message = "";
-    await new Promise(r => setTimeout(r, 500));
 
-    if (email && password) {
-      session.set({ email, name: "Test User", token: "dummy-token" });
-    } else {
-      message = "Please enter email and password";
+    const res = await fetch("/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email,
+        password
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      message = data.error;
+      return;
+    }
+
+    // reload user after login
+    const userRes = await fetch("/myaccount");
+    if (userRes.ok) {
+      user = await userRes.json();
+      loggedIn = true;
     }
   }
 
+  // =========================
+  // REGISTER (KEEP SIMPLE)
+  // =========================
   async function register() {
     message = "";
+
     await new Promise(r => setTimeout(r, 500));
 
     if (name && email && password) {
@@ -42,13 +70,31 @@
     }
   }
 
-  function logout() {
-    session.set(null);
+  // =========================
+  // LOGOUT (REAL)
+  // =========================
+  async function logout() {
+    await fetch("/logout");
+
+    user = null;
+    loggedIn = false;
+
     email = "";
     password = "";
     name = "";
     message = "";
   }
+
+  // =========================
+  // STATIC UI DATA (KEEP YOUR UI)
+  // =========================
+  const orderHistory = [
+    { id: 1, items: "Pepperoni Pizza, Garlic Bread", date: "12 Mar 2026" },
+    { id: 2, items: "BBQ Chicken Pizza", date: "5 Mar 2026" }
+  ];
+
+  const favouriteMeals = ["Pepperoni Pizza", "BBQ Chicken Pizza", "Garlic Bread"];
+  const location = "75 Hillcrest Close, Lucan Co. Dublin";
 </script>
 
 <h1>My Account</h1>
@@ -58,7 +104,7 @@
 <div class="account-page">
 
   <div class="account-header">
-    <h2>Welcome back {get(session)?.name || get(session)?.email}</h2>
+    <h2>Welcome back {user?.name || user?.email}</h2>
     <p>Ready for your next order?</p>
   </div>
 
@@ -90,8 +136,10 @@
 
     <section class="card">
       <h3>Profile</h3>
-      <p><strong>Name:</strong> {get(session)?.name}</p>
-      <p><strong>Email:</strong> {get(session)?.email}</p>
+      <p><strong>Name:</strong> {user?.name}</p>
+      <p><strong>Email:</strong> {user?.email}</p>
+      <p><strong>Address:</strong> {user?.address}</p>
+      <p><strong>Phone:</strong> {user?.phone}</p>
     </section>
 
   </div>
@@ -136,37 +184,44 @@
   </div>
 
   <section class="account-page">
-  <h1>Getting Started</h1>
+    <h1>Getting Started</h1>
 
-  <div class="dashboard-grid">
-    <!-- Steps to Log In -->
-    <div class="card">
-      <h3>How to Log In</h3>
-      <ol class="login-steps">
-        <li>Enter your username or email address.</li>
-        <li>Type your secure password.</li>
-        <li>Click the <strong>Log In</strong> button.</li>
-        <li>Enjoy full access to your account!</li>
-      </ol>
-    </div>
+    <div class="dashboard-grid">
 
-    <!-- Benefits of Making an Account -->
-    <div class="card">
-      <h3>Benefits of Creating an Account</h3>
-      <ul class="login-benefits">
-        <li>Access your personalized dashboard.</li>
-        <li>Save your preferences and settings.</li>
-        <li>Receive exclusive offers and updates.</li>
-        <li>Faster checkout and order tracking.</li>
-      </ul>
+      <div class="card">
+        <h3>How to Log In</h3>
+        <ol class="login-steps">
+          <li>Enter your username or email address.</li>
+          <li>Type your secure password.</li>
+          <li>Click the <strong>Log In</strong> button.</li>
+          <li>Enjoy full access to your account!</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <h3>Benefits of Creating an Account</h3>
+        <ul class="login-benefits">
+          <li>Access your personalized dashboard.</li>
+          <li>Save your preferences and settings.</li>
+          <li>Receive exclusive offers and updates.</li>
+          <li>Faster checkout and order tracking.</li>
+        </ul>
+      </div>
+
     </div>
-  </div>
-</section>
-  
+  </section>
+
 </div>
 
 {/if}
 
+
+
+
+
+
+
+<!-- styling/css  -->
 <style>
 h1 {
   text-align: center;
