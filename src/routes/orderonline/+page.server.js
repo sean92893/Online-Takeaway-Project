@@ -1,8 +1,8 @@
 import Stripe from 'stripe';
 import { STRIPE_SECRET_KEY } from '$env/static/private';
 import { db } from '$lib/server/db';
-import { users, orders } from '$lib/server/db/schema.js';
-import { eq } from 'drizzle-orm';
+import { users, orders, orderItems, menuItems } from '$lib/server/db/schema.js';
+import { eq, inArray } from 'drizzle-orm';
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
@@ -52,6 +52,12 @@ export const actions = {
                 phone:    phone
             }).returning();
             user = newUser;
+        } else {
+            // Update address and phone for existing users on every order
+            await db
+                .update(users)
+                .set({ address, phone })
+                .where(eq(users.id, user.id));
         }
 
         const [order] = await db.insert(orders).values({
@@ -60,6 +66,27 @@ export const actions = {
             totalPrice: total,
             status:     'pending'
         }).returning();
+
+        // Save each cart item to order_items
+        const itemNames = cart.map(i => i.name);
+        const dbMenuItems = await db
+            .select()
+            .from(menuItems)
+            .where(inArray(menuItems.name, itemNames));
+
+        const nameToId = Object.fromEntries(dbMenuItems.map(m => [m.name, m.id]));
+
+        const orderItemRows = cart
+            .filter(i => nameToId[i.name])
+            .map(i => ({
+                orderId:    order.id,
+                menuItemId: nameToId[i.name],
+                quantity:   i.qty
+            }));
+
+        if (orderItemRows.length > 0) {
+            await db.insert(orderItems).values(orderItemRows);
+        }
 
         const lineItems = cart.map(item => ({
             price_data: {

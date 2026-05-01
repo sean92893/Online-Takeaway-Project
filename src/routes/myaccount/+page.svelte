@@ -10,23 +10,36 @@
   let loggedIn = false;
   let user = null;
 
-  // =========================
-  // LOAD USER FROM BACKEND
-  // =========================
+  let orderHistory = [];
+  let isLoadingOrders = true;
+
+
+  // Load user from backend
   onMount(async () => {
-  const res = await fetch("/myaccount", {
-    credentials: "include" 
+    const res = await fetch("/myaccount", {
+      credentials: "include"
+    });
+
+    if (res.ok) {
+      user = await res.json();
+      loggedIn = true;
+      await loadOrders();
+    }
+
+    isLoadingOrders = false;
   });
 
-  if (res.ok) {
-    user = await res.json();
-    loggedIn = true;
+  async function loadOrders() {
+    const ordRes = await fetch("/myorders", {
+      credentials: "include"
+    });
+    if (ordRes.ok) {
+      orderHistory = await ordRes.json();
+    }
   }
-});
 
-  // =========================
-  // LOGIN (REAL BACKEND)
-  // =========================
+
+  // Login
   async function login() {
     message = "";
 
@@ -49,75 +62,67 @@
       return;
     }
 
-    // reload user after login
+    // reload full user from /myaccount after login sets the cookie
     const userRes = await fetch("/myaccount", {
       credentials: "include"
-});
+    });
 
-if (userRes.ok) {
-  user = await userRes.json();
-  loggedIn = true;
-
-  message = ""; // clear errors
-}
+    if (userRes.ok) {
+      user = await userRes.json();
+      loggedIn = true;
+      message = "";
+      isLoadingOrders = true;
+      await loadOrders();
+      isLoadingOrders = false;
+    }
   }
 
-  // =========================
-  // REGISTER (KEEP SIMPLE)
-  // =========================
+
+  // Register
   async function register() {
-  message = "";
+    message = "";
 
-  const res = await fetch("/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      name,
-      email,
-      password
-    })
-  });
+    const res = await fetch("/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        name,
+        email,
+        password
+      })
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (!res.ok) {
-    message = data.error;
-    return;
+    if (!res.ok) {
+      message = data.error;
+      return;
+    }
+
+    message = "Account created! Please log in.";
+    isRegister = false;
   }
 
-  message = "Account created! Please log in.";
-  isRegister = false;
-}
 
-  // =========================
-  // LOGOUT (REAL)
-  // =========================
+  // Logout
   async function logout() {
-  await fetch("/logout", {
-    credentials: "include"
-  });
+    await fetch("/logout", {
+      credentials: "include"
+    });
 
-  user = null;
-  loggedIn = false;
+    user = null;
+    loggedIn = false;
+    orderHistory = [];
+    isLoadingOrders = true;
 
-  email = "";
-  password = "";
-  name = "";
-  message = "";
-}
-
-  // =========================
-  // STATIC UI DATA (KEEP YOUR UI)
-  // =========================
-  const orderHistory = [
-    { id: 1, items: "Pepperoni Pizza, Garlic Bread", date: "12 Mar 2026" },
-    { id: 2, items: "BBQ Chicken Pizza", date: "5 Mar 2026" }
-  ];
-
-  const favouriteMeals = ["Pepperoni Pizza", "BBQ Chicken Pizza", "Garlic Bread"];
-  const location = "75 Hillcrest Close, Lucan Co. Dublin";
+    email = "";
+    password = "";
+    name = "";
+    message = "";
+  }
 </script>
 
 <h1>My Account</h1>
@@ -135,34 +140,37 @@ if (userRes.ok) {
 
     <section class="card">
       <h3>Order History</h3>
-      {#each orderHistory as order}
-        <div class="order-item">
-          <strong>{order.date}</strong>
-          <p>{order.items}</p>
-        </div>
-      {/each}
+      {#if isLoadingOrders}
+        <p class="muted">Loading your orders...</p>
+      {:else if orderHistory.length === 0}
+        <p class="muted">No orders yet — place your first order!</p>
+      {:else}
+        {#each orderHistory as order}
+          <div class="order-item">
+            <strong>{order.date}</strong>
+            <p>{order.items}</p>
+            <small>Total: €{order.total} &middot; <span class="status">{order.status}</span></small>
+          </div>
+        {/each}
+      {/if}
     </section>
 
     <section class="card">
       <h3>Delivery Location</h3>
-      <p>{location}</p>
+      <p>{user?.address ?? 'No address saved yet.'}</p>
     </section>
 
     <section class="card">
       <h3>Favourite Meals</h3>
-      <div class="meal-list">
-        {#each favouriteMeals as meal}
-          <span class="meal-chip">{meal}</span>
-        {/each}
-      </div>
+      <p class="muted">Coming soon.</p>
     </section>
 
     <section class="card">
       <h3>Profile</h3>
-      <p><strong>Name:</strong> {user?.name}</p>
-      <p><strong>Email:</strong> {user?.email}</p>
-      <p><strong>Address:</strong> {user?.address}</p>
-      <p><strong>Phone:</strong> {user?.phone}</p>
+      <p><strong>Name:</strong> {user?.name ?? '—'}</p>
+      <p><strong>Email:</strong> {user?.email ?? '—'}</p>
+      <p><strong>Address:</strong> {user?.address ?? 'Not set'}</p>
+      <p><strong>Phone:</strong> {user?.phone ?? 'Not set'}</p>
     </section>
 
   </div>
@@ -239,12 +247,6 @@ if (userRes.ok) {
 {/if}
 
 
-
-
-
-
-
-<!-- styling/css  -->
 <style>
 h1 {
   text-align: center;
@@ -292,6 +294,27 @@ h1 {
   padding:10px;
   border-radius:6px;
   margin-bottom:8px;
+}
+
+.order-item p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.order-item small {
+  font-size: 12px;
+  color: #666;
+}
+
+.status {
+  text-transform: capitalize;
+  font-weight: bold;
+  color: #ff6600;
+}
+
+.muted {
+  color: #999;
+  font-size: 14px;
 }
 
 .meal-list{
@@ -405,5 +428,4 @@ a{
   margin-bottom: 10px;
   font-size: 16px;
 }
-
 </style>

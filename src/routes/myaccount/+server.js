@@ -66,7 +66,7 @@ export async function POST({ request, cookies }) {
       address: data.address,
       phone: data.phone
     })
-    .where(eq(users.id, Number(userId)));
+    .where(eq(users.id, (userId)));
 
   return new Response(
     JSON.stringify({ success: true }),
