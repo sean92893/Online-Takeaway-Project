@@ -160,10 +160,10 @@
       <p>{user?.address ?? 'No address saved yet.'}</p>
     </section>
 
-    <section class="card">
+    <!-- <section class="card">
       <h3>Favourite Meals</h3>
       <p class="muted">Coming soon.</p>
-    </section>
+    </section> -->
 
     <section class="card">
       <h3>Profile</h3>
@@ -317,19 +317,6 @@ h1 {
   font-size: 14px;
 }
 
-.meal-list{
-  display:flex;
-  flex-wrap:wrap;
-}
-
-.meal-chip{
-  background:#ff6600;
-  color:white;
-  padding:6px 12px;
-  border-radius:20px;
-  margin:5px;
-  font-size:14px;
-}
 
 .logout-btn{
   margin-top:2rem;
